@@ -1,9 +1,9 @@
 ---
 # --------------------------------
 
-- name: 'added some directories under /usr/local'
-  file:
-    path: '{{item}}'
+- name: 'Added some directories under /usr/local'
+  ansible.builtin.file:
+    path: '{{ item }}'
     state: directory
     owner: root
     group: root
@@ -14,8 +14,8 @@
   - ct-docker
   - ct-docker-scripts
 
-- name: 'copy bash include file over'
-  copy:
+- name: 'Copy bash include file over'
+  ansible.builtin.copy:
     src: docker.sh
     dest: /usr/local/etc/bash.d
     owner: root
@@ -26,9 +26,9 @@
   - ct-docker
   - ct-docker-scripts
 
-- name: 'copy convenience scripts over'
-  copy:
-    src: '{{item}}'
+- name: 'Copy convenience scripts over'
+  ansible.builtin.copy:
+    src: '{{ item }}'
     dest: /usr/local/bin
     owner: root
     group: root
@@ -43,17 +43,17 @@
   - ct-docker
   - ct-docker-scripts
 
-- name: 'grab some packages so we can install the repo key'
-  apt:
-    name: '{{docker_dependencies}}'
+- name: 'Grab some packages so we can install the repo key'
+  ansible.builtin.apt:
+    name: '{{ docker_dependencies }}'
     state: present
   become: true
   tags:
   - ct-docker
   - ct-docker-pkg
 
-- name: 'add docker repo key'
-  apt_key:
+- name: 'Add docker repo key'
+  ansible.builtin.apt_key:
     url: 'https://download.docker.com/linux/ubuntu/gpg'
     validate_certs: true
     state: present
@@ -62,9 +62,9 @@
   - ct-docker
   - ct-docker-repo
 
-- name: 'add docker repository to APT'
-  apt_repository:
-    repo: 'deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ct_codename}} stable'
+- name: 'Add docker repository to APT'
+  ansible.builtin.apt_repository:
+    repo: 'deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ct_codename }} stable'
     state: present
     update_cache: true
     filename: docker
@@ -74,46 +74,46 @@
   - ct-docker
   - ct-docker-repo
 
-- name: 'update apt cache and install docker packages'
-  apt:
-    name: '{{docker_packages}}'
-    update_cache: '{{reg_docker_repo is changed}}'
+- name: 'Update apt cache and install docker packages'
+  ansible.builtin.apt:
+    name: '{{ docker_packages }}'
+    update_cache: '{{ reg_docker_repo is changed }}'
     state: present
   become: true
   tags:
   - ct-docker
   - ct-docker-pkg
 
-- name: 'add users to docker role'
-  user:
-    name: '{{item}}'
+- name: 'Add users to docker role'
+  ansible.builtin.user:
+    name: '{{ item }}'
     append: true
     groups: 'docker'
-  loop: '{{docker_users}}'
+  loop: '{{ docker_users }}'
   become: true
   tags:
   - ct-docker
   - ct-docker-user
 
-- name: 'render logrotate config'
-  template:
+- name: 'Render logrotate config'
+  ansible.builtin.template:
     src: logrotate.j2
-    dest: /etc/logrotate.d/{{item.filename}}
+    dest: /etc/logrotate.d/{{ item.filename }}
     owner: root
     group: root
     mode: '0644'
   vars:
-    lr_count: '{{item.count}}'
-    lr_path: '{{item.path}}'
-    lr_size: '{{item.size}}'
-  loop: '{{docker_logrotation}}'
+    lr_count: '{{ item.count }}'
+    lr_path: '{{ item.path }}'
+    lr_size: '{{ item.size }}'
+  loop: '{{ docker_logrotation }}'
   become: true
   tags:
   - ct-docker
   - ct-docker-hkp
 
-- name: 'start and enable docker service'
-  service:
+- name: 'Start and enable docker service'
+  ansible.builtin.service:
     name: docker
     enabled: true
     state: started
@@ -125,8 +125,8 @@
 # --------------------------------
 # optional Docker Swarm set up
 
-- name: 'get local IP (assumes AWS host)'
-  command: curl http://169.254.169.254/latest/meta-data/local-ipv4
+- name: 'Get local IP (assumes AWS host)'
+  ansible.builtin.command: curl http://169.254.169.254/latest/meta-data/local-ipv4
   when:
   - docker_swarm_mode == 'master'
   - (ct_cloud|default('foo')) == 'aws'
@@ -137,19 +137,19 @@
   - ct-docker
   - ct-docker-swarm
 
-- name: 'generate docker swarm key'
-  shell: docker swarm init  --advertise-addr {{reg_ip.stdout_lines[0]}} | grep 'docker swarm join ' > {{docker_swarm_tmpfile}}
+- name: 'Generate docker swarm key'
+  ansible.builtin.shell: docker swarm init  --advertise-addr {{ reg_ip.stdout_lines[0] }} | grep 'docker swarm join ' > {{ docker_swarm_tmpfile }}
   args:
-    creates: '{{docker_swarm_tmpfile}}'
+    creates: '{{ docker_swarm_tmpfile }}'
   when: docker_swarm_mode == 'master'
   become: true
   tags:
   - ct-docker
   - ct-docker-swarm
 
-- name: 'fetch swarm file'
-  fetch:
-    src: '{{docker_swarm_tmpfile}}'
+- name: 'Fetch swarm file'
+  ansible.builtin.fetch:
+    src: '{{ docker_swarm_tmpfile }}'
     dest: /tmp/
     flat: true
   when: docker_swarm_mode == 'master'
@@ -158,8 +158,8 @@
   - ct-docker
   - ct-docker-swarm
 
-- name: 'load docker swarm command'
-  command: cat {{docker_swarm_tmpfile}}
+- name: 'Load docker swarm command'
+  ansible.builtin.command: cat {{ docker_swarm_tmpfile }}
   when: docker_swarm_mode == 'minion'
   register: reg_join_command
   changed_when: false
@@ -168,13 +168,13 @@
   - ct-docker
   - ct-docker-swarm
 
-- name: 'tell minion to join swarm'
-  shell: '{{reg_join_command.stdout_lines[0]}}'
+- name: 'Tell minion to join swarm'
+  ansible.builtin.shell: '{{ reg_join_command.stdout_lines[0] }}'
   when: docker_swarm_mode == 'minion'
   register: reg_join
   failed_when: (reg_join.rc|int > 0) and ('This node is already part of a swarm' not in reg_join.stderr)
   become: true
-  ignore_errors: '{{ansible_check_mode}}'
+  ignore_errors: '{{ ansible_check_mode }}'
   # changed_when: TODO
   tags:
   - ct-docker
