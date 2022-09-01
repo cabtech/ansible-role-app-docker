@@ -10,9 +10,7 @@
     mode: 0755
   loop: ['/usr/local/bin', '/usr/local/etc', '/usr/local/etc/bash.d']
   become: true
-  tags:
-  - ct-docker
-  - ct-docker-scripts
+  tags: ['ct-docker', 'ct-docker-scripts']
 
 - name: 'Copy bash include file over'
   ansible.builtin.copy:
@@ -22,9 +20,7 @@
     group: root
     mode: 0644
   become: true
-  tags:
-  - ct-docker
-  - ct-docker-scripts
+  tags: ['ct-docker', 'ct-docker-scripts']
 
 - name: 'Copy convenience scripts over'
   ansible.builtin.copy:
@@ -39,18 +35,14 @@
   - drdi.sh
   - drun.sh
   become: true
-  tags:
-  - ct-docker
-  - ct-docker-scripts
+  tags: ['ct-docker', 'ct-docker-scripts']
 
 - name: 'Grab some packages so we can install the repo key'
   ansible.builtin.apt:
     name: '{{ docker_dependencies }}'
     state: present
   become: true
-  tags:
-  - ct-docker
-  - ct-docker-pkg
+  tags: ['ct-docker']
 
 - name: 'Add docker repo key'
   ansible.builtin.apt_key:
@@ -58,9 +50,7 @@
     validate_certs: true
     state: present
   become: true
-  tags:
-  - ct-docker
-  - ct-docker-repo
+  tags: ['ct-docker']
 
 - name: 'Add docker repository to APT'
   ansible.builtin.apt_repository:
@@ -70,9 +60,7 @@
     filename: docker
   register: reg_docker_repo
   become: true
-  tags:
-  - ct-docker
-  - ct-docker-repo
+  tags: ['ct-docker']
 
 - name: 'Update apt cache and install docker packages'
   ansible.builtin.apt:
@@ -80,9 +68,27 @@
     update_cache: '{{ reg_docker_repo is changed }}'
     state: present
   become: true
-  tags:
-  - ct-docker
-  - ct-docker-pkg
+  tags: ['ct-docker']
+
+- name: 'Install ECR helper package (AWS only)'
+  ansible.builtin.apt:
+    name: '{{ docker_packages_aws }}'
+    update_cache: '{{ reg_docker_repo is changed }}'
+    state: present
+  when: (ct_cloud|default('earth')) == 'aws'
+  become: true
+  tags: ['ct-docker']
+
+- name: 'Install Docker config to use ECR helper (AWS only)'
+  ansible.builtin.copy:
+    dest: /root/.docker/config.json
+    group: root
+    mode: '0600'
+    owner: root
+    src: files/config.json
+  when: (ct_cloud|default('earth')) == 'aws'
+  become: true
+  tags: ['ct-docker']
 
 - name: 'Add users to docker role'
   ansible.builtin.user:
@@ -91,9 +97,7 @@
     groups: 'docker'
   loop: '{{ docker_users }}'
   become: true
-  tags:
-  - ct-docker
-  - ct-docker-user
+  tags: ['ct-docker']
 
 - name: 'Render logrotate config'
   ansible.builtin.template:
@@ -108,9 +112,7 @@
     lr_size: '{{ item.size }}'
   loop: '{{ docker_logrotation }}'
   become: true
-  tags:
-  - ct-docker
-  - ct-docker-hkp
+  tags: ['ct-docker']
 
 - name: 'Start and enable docker service'
   ansible.builtin.service:
@@ -118,12 +120,10 @@
     enabled: true
     state: started
   become: true
-  tags:
-  - ct-docker
-  - ct-docker-svc
+  tags: ['ct-docker']
 
 # --------------------------------
-# optional Docker Swarm set up
+# DEPRECATED Docker Swarm set up
 
 - name: 'Get local IP (assumes AWS host)'
   ansible.builtin.command: curl http://169.254.169.254/latest/meta-data/local-ipv4
@@ -133,9 +133,7 @@
   register: reg_ip
   check_mode: false
   become: true
-  tags:
-  - ct-docker
-  - ct-docker-swarm
+  tags: ['ct-docker', 'ct-docker-swarm', 'DEPRECATED']
 
 - name: 'Generate docker swarm key'
   ansible.builtin.shell: docker swarm init  --advertise-addr {{ reg_ip.stdout_lines[0] }} | grep 'docker swarm join ' > {{ docker_swarm_tmpfile }}
@@ -143,9 +141,7 @@
     creates: '{{ docker_swarm_tmpfile }}'
   when: docker_swarm_mode == 'master'
   become: true
-  tags:
-  - ct-docker
-  - ct-docker-swarm
+  tags: ['ct-docker', 'ct-docker-swarm', 'DEPRECATED']
 
 - name: 'Fetch swarm file'
   ansible.builtin.fetch:
@@ -153,10 +149,7 @@
     dest: /tmp/
     flat: true
   when: docker_swarm_mode == 'master'
-  become: true
-  tags:
-  - ct-docker
-  - ct-docker-swarm
+  tags: ['ct-docker', 'ct-docker-swarm', 'DEPRECATED']
 
 - name: 'Load docker swarm command'
   ansible.builtin.command: cat {{ docker_swarm_tmpfile }}
@@ -164,9 +157,7 @@
   register: reg_join_command
   changed_when: false
   delegate_to: localhost
-  tags:
-  - ct-docker
-  - ct-docker-swarm
+  tags: ['ct-docker', 'ct-docker-swarm', 'DEPRECATED']
 
 - name: 'Tell minion to join swarm'
   ansible.builtin.shell: '{{ reg_join_command.stdout_lines[0] }}'
@@ -176,9 +167,7 @@
   become: true
   ignore_errors: '{{ ansible_check_mode }}'
   # changed_when: TODO
-  tags:
-  - ct-docker
-  - ct-docker-swarm
+  tags: ['ct-docker', 'ct-docker-swarm', 'DEPRECATED']
 
 # --------------------------------
 ...

@@ -2,6 +2,7 @@
 docker_dependencies: ['apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common']
 docker_logrotation: []
 docker_packages: ['docker-ce']
+docker_packages_aws: ['amazon-ecr-credential-helper']
 docker_swarm_mode: 'neither'
 docker_swarm_tmpfile: /tmp/ansible-swarm.txt
 docker_users: []
