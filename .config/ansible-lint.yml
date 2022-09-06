@@ -5,4 +5,5 @@ skip_list:
 - meta-no-info
 - risky-shell-pipe  # FIXME
 - role-name
+- yaml[indentation]
 ...

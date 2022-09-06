@@ -67,7 +67,7 @@
     name: '{{ docker_packages }}'
     update_cache: '{{ reg_docker_repo is changed }}'
     state: present
-  ignore_errors: '{{ansible_check_mode}}'
+  ignore_errors: '{{ ansible_check_mode }}'
   become: true
   tags: ['ct-docker']
 
@@ -76,6 +76,17 @@
     name: '{{ docker_packages_aws }}'
     update_cache: '{{ reg_docker_repo is changed }}'
     state: present
+  when: (ct_cloud|default('earth')) == 'aws'
+  become: true
+  tags: ['ct-docker']
+
+- name: 'Create Docker config dir (AWS only)'
+  ansible.builtin.file:
+    path: /root/.docker
+    group: root
+    mode: '0700'
+    owner: root
+    state: directory
   when: (ct_cloud|default('earth')) == 'aws'
   become: true
   tags: ['ct-docker']
@@ -97,7 +108,7 @@
     append: true
     groups: 'docker'
   loop: '{{ docker_users }}'
-  ignore_errors: '{{ansible_check_mode}}'
+  ignore_errors: '{{ ansible_check_mode }}'
   become: true
   tags: ['ct-docker']
 
@@ -121,7 +132,7 @@
     name: docker
     enabled: true
     state: started
-  ignore_errors: '{{ansible_check_mode}}'
+  ignore_errors: '{{ ansible_check_mode }}'
   become: true
   tags: ['ct-docker']
 

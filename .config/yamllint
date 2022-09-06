@@ -1,0 +1,9 @@
+---
+
+extends: default
+
+rules:
+  comments-indentation: disable
+  indentation: disable
+  line-length: disable
+...
