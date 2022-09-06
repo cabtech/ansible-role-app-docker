@@ -67,8 +67,8 @@
     name: '{{ docker_packages }}'
     update_cache: '{{ reg_docker_repo is changed }}'
     state: present
-  become: true
   ignore_errors: '{{ansible_check_mode}}'
+  become: true
   tags: ['ct-docker']
 
 - name: 'Install ECR helper package (AWS only)'
@@ -91,12 +91,13 @@
   become: true
   tags: ['ct-docker']
 
-- name: 'Add users to docker role'
+- name: 'Add users to docker role (IECM)'
   ansible.builtin.user:
     name: '{{ item }}'
     append: true
     groups: 'docker'
   loop: '{{ docker_users }}'
+  ignore_errors: '{{ansible_check_mode}}'
   become: true
   tags: ['ct-docker']
 
