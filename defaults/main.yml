@@ -3,7 +3,9 @@ docker_dependencies:
   debian: ['apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common']
   redhat: ['ca-certificates', 'curl']
 docker_logrotation: []
-docker_packages: ['docker-ce']
+docker_packages:
+  debian: ['docker-ce']
+  redhat: ['docker']
 docker_packages_aws:
   debian: ['amazon-ecr-credential-helper']
   redhat: ['amazon-ecr-credential-helper']
