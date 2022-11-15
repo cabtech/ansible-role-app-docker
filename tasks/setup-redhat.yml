@@ -1,0 +1,37 @@
+---
+# --------------------------------
+
+- name: "Grab some packages so we can install the repo key"
+  ansible.builtin.yum:
+    name: "{{ docker_dependencies.redhat }}"
+    state: present
+  become: true
+  tags: ["ct-docker"]
+
+- name: "Enable docker in ALE (TODO: switch from command module)"
+  ansible.builtin.command: "amazon-linux-extras enable docker"
+  register: slartibartfast
+  changed_when: "'jabberwocky' in slartibartfast.stdout"
+  become: true
+  tags: ["ct-envoy"]
+
+- name: "Update apt cache and install docker packages (IE:CM)"
+  ansible.builtin.yum:
+    name: "{{ docker_packages }}"
+    update_cache: true
+    state: present
+  ignore_errors: "{{ ansible_check_mode }}"
+  become: true
+  tags: ["ct-docker"]
+
+- name: "Install ECR helper package (AWS only)"
+  ansible.builtin.yum:
+    name: "{{ docker_packages_aws.redhat }}"
+    update_cache: false
+    state: present
+  when: (ct_cloud|default("earth")) == "aws"
+  become: true
+  tags: ["ct-docker"]
+
+# --------------------------------
+...

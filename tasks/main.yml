@@ -37,47 +37,10 @@
   become: true
   tags: ['ct-docker', 'ct-docker-scripts']
 
-- name: 'Grab some packages so we can install the repo key'
-  ansible.builtin.apt:
-    name: '{{ docker_dependencies }}'
-    state: present
-  become: true
-  tags: ['ct-docker']
-
-- name: 'Add docker repo key'
-  ansible.builtin.apt_key:
-    url: 'https://download.docker.com/linux/ubuntu/gpg'
-    validate_certs: true
-    state: present
-  become: true
-  tags: ['ct-docker']
-
-- name: 'Add docker repository to APT'
-  ansible.builtin.apt_repository:
-    repo: 'deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ct_codename }} stable'
-    state: present
-    update_cache: true
-    filename: docker
-  register: reg_docker_repo
-  become: true
-  tags: ['ct-docker']
-
-- name: 'Update apt cache and install docker packages (IECM)'
-  ansible.builtin.apt:
-    name: '{{ docker_packages }}'
-    update_cache: '{{ reg_docker_repo is changed }}'
-    state: present
-  ignore_errors: '{{ ansible_check_mode }}'
-  become: true
-  tags: ['ct-docker']
-
-- name: 'Install ECR helper package (AWS only)'
-  ansible.builtin.apt:
-    name: '{{ docker_packages_aws }}'
-    update_cache: '{{ reg_docker_repo is changed }}'
-    state: present
-  when: (ct_cloud|default('earth')) == 'aws'
-  become: true
+- name: "Include {{ ct_family }} tasks"
+  include_tasks: setup-{{ ct_family }}.yml
+  when:
+  - ct_family == "debian" or ct_family == "redhat"
   tags: ['ct-docker']
 
 - name: 'Create Docker config dir (AWS only)'
