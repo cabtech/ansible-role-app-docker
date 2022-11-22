@@ -1,0 +1,51 @@
+---
+# --------------------------------
+# DEPRECATED Docker Swarm set up
+# --------------------------------
+
+- name: "Get local IP (assumes AWS host)"
+  ansible.builtin.command: curl http://169.254.169.254/latest/meta-data/local-ipv4
+  when:
+  - docker_swarm_mode == "master"
+  - (ct_cloud|default("foo")) == "aws"
+  register: reg_ip
+  check_mode: false
+  become: true
+  tags: ["DEPRECATED"]
+
+- name: "Generate docker swarm key"
+  ansible.builtin.shell: docker swarm init  --advertise-addr {{ reg_ip.stdout_lines[0] }} | grep "docker swarm join " > {{ docker_swarm_tmpfile }}
+  args:
+    creates: "{{ docker_swarm_tmpfile }}"
+  when: docker_swarm_mode == "master"
+  become: true
+  tags: ["DEPRECATED"]
+
+- name: "Fetch swarm file"
+  ansible.builtin.fetch:
+    src: "{{ docker_swarm_tmpfile }}"
+    dest: /tmp/
+    flat: true
+  when: docker_swarm_mode == "master"
+  tags: ["DEPRECATED"]
+
+- name: "Load docker swarm command"
+  ansible.builtin.command: cat {{ docker_swarm_tmpfile }}
+  when: docker_swarm_mode == "minion"
+  register: reg_join_command
+  changed_when: false
+  delegate_to: localhost
+  tags: ["DEPRECATED"]
+
+- name: "Tell minion to join swarm"
+  ansible.builtin.shell: "{{ reg_join_command.stdout_lines[0] }}"
+  when: docker_swarm_mode == "minion"
+  register: reg_join
+  failed_when: (reg_join.rc|int > 0) and ("This node is already part of a swarm" not in reg_join.stderr)
+  become: true
+  ignore_errors: "{{ ansible_check_mode }}"
+  # changed_when: TODO
+  tags: ["DEPRECATED"]
+
+# --------------------------------
+...

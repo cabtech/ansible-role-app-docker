@@ -1,0 +1,10 @@
+{
+  "credHelpers": {
+{% if docker_aws_repos is defined %}
+{% for repo in docker_aws_repos %}
+    "{{ repo.acct_id }}.dkr.ecr.{{ repo.region_name }}.amazonaws.com": "ecr-login",
+{% endfor %}
+{% endif %}
+    "hub.docker.com": "registryhelper"
+  }
+}

@@ -1,4 +1,9 @@
 ---
+# --------------------------------
+# optional
+# docker_aws_repos = list(dict(acct_id, region_name))
+# --------------------------------
+
 docker_dependencies:
   debian: ['apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common']
   redhat: ['ca-certificates', 'curl']
@@ -12,4 +17,6 @@ docker_packages_aws:
 docker_swarm_mode: 'neither'
 docker_swarm_tmpfile: /tmp/ansible-swarm.txt
 docker_users: []
+
+# --------------------------------
 ...
