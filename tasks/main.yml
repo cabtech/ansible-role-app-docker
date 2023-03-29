@@ -7,7 +7,7 @@
     state: directory
     owner: root
     group: root
-    mode: 0755
+    mode: "0755"
   loop: ["/usr/local/bin", "/usr/local/etc", "/usr/local/etc/bash.d"]
   become: true
   tags: ["ct-docker"]
@@ -18,7 +18,7 @@
     dest: /usr/local/etc/bash.d
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   become: true
   tags: ["ct-docker"]
 
@@ -37,7 +37,7 @@
   become: true
   tags: ["ct-docker"]
 
-- name: "Include {{ ct_family }} tasks"
+- name: "Include tasks based on family"
   include_tasks: setup-{{ ct_family }}.yml
   when:
   - ct_family == "debian" or ct_family == "redhat"
@@ -75,7 +75,7 @@
   become: true
   tags: ["ct-docker"]
 
-- name: "Add users to docker role (IECM)"
+- name: "Add users to docker role (IE:CM)"
   ansible.builtin.user:
     name: "{{ item }}"
     append: true
