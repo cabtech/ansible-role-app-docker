@@ -59,7 +59,7 @@
     group: root
     mode: "0600"
     owner: root
-    src: config.json.j2
+    src: config.json
   when: (ct_cloud|default("earth")) != "aws"
   become: true
   tags: ["ct-docker"]
