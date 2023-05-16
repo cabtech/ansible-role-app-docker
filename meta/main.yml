@@ -3,4 +3,16 @@ dependencies:
 - src: git+https://github.com/cabtech/ansible-role-util-facts.git
   tags: always
   version: '1.1.0'
+
+galaxy_info:
+  author: Tim Short
+  description: Sets up Docker
+  galaxy_tags: [docker]
+  license: GPL v3
+  role_name: ansible_role_app_docker
+  min_ansible_version: "2"
+  namespace: cabtech
+  platforms:
+  - name: Ubuntu
+    versions: [bionic, focal, jammy]
 ...
