@@ -38,7 +38,7 @@
   tags: ["ct-docker"]
 
 - name: "Include tasks based on family"
-  include_tasks: setup-{{ ct_family }}.yml
+  ansible.builtin.include_tasks: setup-{{ ct_family }}.yml
   when:
   - ct_family == "debian" or ct_family == "redhat"
   tags: ["ct-docker"]
