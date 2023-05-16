@@ -8,7 +8,7 @@
   become: true
   tags: ["ct-docker"]
 
-- name: "Add docker repo key"
+- name: "Add Docker repo key"
   ansible.builtin.apt_key:
     url: "https://download.docker.com/linux/ubuntu/gpg"
     validate_certs: true
@@ -16,7 +16,7 @@
   become: true
   tags: ["ct-docker"]
 
-- name: "Add docker repository to APT"
+- name: "Add Docker repository to APT"
   ansible.builtin.apt_repository:
     repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ct_codename }} stable"
     state: present
@@ -26,7 +26,7 @@
   become: true
   tags: ["ct-docker"]
 
-- name: "Update apt cache and install docker packages (IE:CM)"
+- name: "Update apt cache and install Docker packages (IE:CM)"
   ansible.builtin.apt:
     name: "{{ docker_packages.debian }}"
     update_cache: "{{ reg_docker_repo is changed }}"

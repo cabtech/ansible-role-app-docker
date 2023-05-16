@@ -75,7 +75,7 @@
   become: true
   tags: ["ct-docker"]
 
-- name: "Add users to docker role (IE:CM)"
+- name: "Add users to Docker role (IE:CM)"
   ansible.builtin.user:
     name: "{{ item }}"
     append: true
@@ -100,7 +100,7 @@
   become: true
   tags: ["ct-docker"]
 
-- name: "Start and enable docker service"
+- name: "Start and enable Docker service"
   ansible.builtin.service:
     name: docker
     enabled: true

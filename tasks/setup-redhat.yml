@@ -8,14 +8,14 @@
   become: true
   tags: ["ct-docker"]
 
-- name: "Enable docker in ALE (TODO: switch from command module)"
+- name: "Enable Docker in ALE (TODO: switch from command module)"
   ansible.builtin.command: "amazon-linux-extras enable docker"
   register: slartibartfast
   changed_when: "'jabberwocky' in slartibartfast.stdout"
   become: true
   tags: ["ct-envoy"]
 
-- name: "Update apt cache and install docker packages (IE:CM)"
+- name: "Update apt cache and install Docker packages (IE:CM)"
   ansible.builtin.yum:
     name: "{{ docker_packages.redhat }}"
     update_cache: true
