@@ -8,5 +8,11 @@ lint: .ylint .alint
 	yamllint --config-file=.config/yamllint .
 	@touch $@
 
+# --------------------------------
+
+push:
+	@mkdir -p /mnt/hgfs/shared/ansible-role-app-docker
+	rsync -a * /mnt/hgfs/shared/ansible-role-app-docker
+
 clean:
 	@/bin/rm -f .alint .ylint

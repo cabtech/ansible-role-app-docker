@@ -37,10 +37,16 @@
   become: true
   tags: ["ct-docker"]
 
-- name: "Include tasks based on family"
-  ansible.builtin.include_tasks: setup-{{ ct_family }}.yml
-  when:
-  - ct_family == "debian" or ct_family == "redhat"
+- name: "Disto/Family tasks (first found)"
+  ansible.builtin.include_tasks:
+    file: "{{ lookup('ansible.builtin.first_found', params) }}"
+  vars:
+    params:
+      files:
+      - "{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
+      - "{{ ansible_distribution }}.yml"
+      - "{{ ansible_os_family }}.yml"
+      - default.yml
   tags: ["ct-docker"]
 
 - name: "Create Docker config dir"

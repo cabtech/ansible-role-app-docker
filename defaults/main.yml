@@ -14,8 +14,6 @@ docker_packages:
 docker_packages_aws:
   debian: ['amazon-ecr-credential-helper']
   redhat: ['amazon-ecr-credential-helper']
-docker_swarm_mode: 'neither'
-docker_swarm_tmpfile: /tmp/ansible-swarm.txt
 docker_users: []
 
 # --------------------------------
