@@ -37,7 +37,7 @@
 
 - name: "Install ECR helper package (AWS only)"
   ansible.builtin.apt:
-    name: "{{ docker_packages_aws.debian }}"
+    name: "{{ docker_packages.aws.debian }}"
     update_cache: "{{ reg_docker_repo is changed }}"
     state: present
   when: (ct_cloud|default("earth")) == "aws"

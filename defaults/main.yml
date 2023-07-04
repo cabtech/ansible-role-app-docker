@@ -11,9 +11,9 @@ docker_logrotation: []
 docker_packages:
   debian: ['docker-ce']
   redhat: ['docker']
-docker_packages_aws:
-  debian: ['amazon-ecr-credential-helper']
-  redhat: ['amazon-ecr-credential-helper']
+  aws:
+    debian: ['amazon-ecr-credential-helper']
+    redhat: ['amazon-ecr-credential-helper']
 docker_users: []
 
 # --------------------------------
