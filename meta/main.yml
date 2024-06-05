@@ -3,11 +3,6 @@
 
 dependencies: []
 
-__dependencies:
-- src: git+https://github.com/cabtech/ansible-role-util-facts.git
-  tags: always
-  version: "1.2.0"
-
 galaxy_info:
   author: Tim Short
   description: Sets up Docker

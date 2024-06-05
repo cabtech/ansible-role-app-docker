@@ -4,17 +4,25 @@
 # docker_aws_repos = list(dict(acct_id, region_name))
 # --------------------------------
 
-docker_dependencies:
-  debian: ['apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common']
-  redhat: ['ca-certificates', 'curl']
+docker_keyring_path: "/usr/share/keyrings/docker.asc"
+docker_keyring_url: "https://download.docker.com/linux/ubuntu/gpg"
 docker_logrotation: []
-docker_packages:
-  debian: ['docker-ce']
-  redhat: ['docker']
-  aws:
-    debian: ['amazon-ecr-credential-helper']
-    redhat: ['amazon-ecr-credential-helper']
+docker_repo_url: "https://download.docker.com/linux/ubuntu"
+docker_svc_name: docker
+docker_svc_state: started
+docker_svc_enabled: true
 docker_users: []
+
+docker_dependencies:
+  debian: ["apt-transport-https", "ca-certificates", "curl", "software-properties-common"]
+  redhat: ["ca-certificates", "curl"]
+
+docker_packages:
+  debian: ["docker-ce"]
+  redhat: ["docker"]
+  aws:
+    debian: ["amazon-ecr-credential-helper"]
+    redhat: ["amazon-ecr-credential-helper"]
 
 # --------------------------------
 ...

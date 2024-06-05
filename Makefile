@@ -1,7 +1,7 @@
-lint: .ylint .alint
+lint: .alint
 
-.alint: */*.yml .config/ansible-lint.yml
-	ansible-lint --config-file=.config/ansible-lint.yml
+.alint: .ylint */*.yml .config/ansible-lint
+	ansible-lint --config-file=.config/ansible-lint
 	@touch $@
 
 .ylint: */*.yml .config/yamllint

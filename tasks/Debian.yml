@@ -8,39 +8,38 @@
   become: true
   tags: ["ct-docker"]
 
-- name: "Add Docker repo key"
-  ansible.builtin.apt_key:
-    url: "https://download.docker.com/linux/ubuntu/gpg"
-    validate_certs: true
-    state: present
+- name: "Add Docker keyring"
+  ansible.builtin.get_url:
+    dest: "{{ docker_keyring_path }}"
+    mode: "0644"
+    url: "{{ docker_keyring_url }}"
   become: true
-  tags: ["ct-docker"]
 
-- name: "Add Docker repository to APT"
+- name: "Add Docker repository"
   ansible.builtin.apt_repository:
-    repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ct_codename }} stable"
+    filename: docker
+    repo: "deb [arch=amd64 signed-by={{ docker_keyring_path }}] {{ docker_repo_url }} {{ ansible_distribution_release }} stable"
     state: present
     update_cache: true
-    filename: docker
   register: reg_docker_repo
   become: true
   tags: ["ct-docker"]
 
-- name: "Update apt cache and install Docker packages (IE:CM)"
+- name: "Update package cache and install Docker packages (IECM)"
   ansible.builtin.apt:
     name: "{{ docker_packages.debian }}"
-    update_cache: "{{ reg_docker_repo is changed }}"
     state: present
+    update_cache: "{{ reg_docker_repo is changed }}"
   ignore_errors: "{{ ansible_check_mode }}"
   become: true
   tags: ["ct-docker"]
 
-- name: "Install ECR helper package (AWS only)"
+- name: "Install ECR helper package (AWS)"
   ansible.builtin.apt:
     name: "{{ docker_packages.aws.debian }}"
-    update_cache: "{{ reg_docker_repo is changed }}"
     state: present
-  when: (ct_cloud|default("earth")) == "aws"
+    update_cache: "{{ reg_docker_repo is changed }}"
+  when: "'aws' in group_names"
   become: true
   tags: ["ct-docker"]
 

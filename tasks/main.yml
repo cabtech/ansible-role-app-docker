@@ -59,33 +59,33 @@
   become: true
   tags: ["ct-docker"]
 
-- name: "Install Docker config (not AWS)"
+- name: "Install Docker config (notAWS)"
   ansible.builtin.copy:
     dest: /root/.docker/config.json
     group: root
     mode: "0600"
     owner: root
     src: config.json
-  when: (ct_cloud|default("earth")) != "aws"
+  when: "'aws' not in group_names"
   become: true
   tags: ["ct-docker"]
 
-- name: "Render Docker config (AWS only)"
+- name: "Render Docker config (AWS)"
   ansible.builtin.template:
     dest: /root/.docker/config.json
     group: root
     mode: "0600"
     owner: root
     src: config.json.j2
-  when: (ct_cloud|default("earth")) == "aws"
+  when: "'aws' in group_names"
   become: true
   tags: ["ct-docker"]
 
-- name: "Add users to Docker role (IE:CM)"
+- name: "Add users to Docker role (IECM)"
   ansible.builtin.user:
-    name: "{{ item }}"
     append: true
     groups: "docker"
+    name: "{{ item }}"
   loop: "{{ docker_users }}"
   ignore_errors: "{{ ansible_check_mode }}"
   become: true
@@ -93,11 +93,11 @@
 
 - name: "Render logrotate config"
   ansible.builtin.template:
-    src: logrotate.j2
     dest: /etc/logrotate.d/{{ item.filename }}
-    owner: root
     group: root
     mode: "0644"
+    owner: root
+    src: logrotate.j2
   vars:
     lr_count: "{{ item.count }}"
     lr_path: "{{ item.path }}"
@@ -106,11 +106,11 @@
   become: true
   tags: ["ct-docker"]
 
-- name: "Start and enable Docker service"
+- name: "Manage Docker service (IECM)"
   ansible.builtin.service:
-    name: docker
-    enabled: true
-    state: started
+    enabled: "{{ docker_svc_enabled | bool }}"
+    name: "{{ docker_svc_name }}"
+    state: "{{ docker_svc_state }}"
   ignore_errors: "{{ ansible_check_mode }}"
   become: true
   tags: ["ct-docker"]

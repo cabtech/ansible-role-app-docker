@@ -13,23 +13,23 @@
   register: slartibartfast
   changed_when: "'jabberwocky' in slartibartfast.stdout"
   become: true
-  tags: ["ct-docker"]
+  tags: ["ct-docker", skip_ansible_lint]
 
-- name: "Install Docker packages (IE:CM)"
+- name: "Install Docker packages (IECM)"
   ansible.builtin.yum:
     name: "{{ docker_packages.redhat }}"
-    update_cache: true
     state: present
+    update_cache: true
   ignore_errors: "{{ ansible_check_mode }}"
   become: true
   tags: ["ct-docker"]
 
-- name: "Install ECR helper package (AWS only)"
+- name: "Install ECR helper package (AWS)"
   ansible.builtin.yum:
     name: "{{ docker_packages.aws.redhat }}"
-    update_cache: false
     state: present
-  when: (ct_cloud|default("earth")) == "aws"
+    update_cache: false
+  when: "'aws' in group_names"
   become: true
   tags: ["ct-docker"]
 
