@@ -14,6 +14,7 @@
     mode: "0644"
     url: "{{ docker_keyring_url }}"
   become: true
+  tags: ["ct-docker"]
 
 - name: "Add Docker repository"
   ansible.builtin.apt_repository:
