@@ -2,6 +2,9 @@
 
 extends: default
 
+ignore: |
+  .venv
+
 rules:
   comments-indentation: disable
   indentation: disable
