@@ -4,7 +4,7 @@
 name: "Lint Ansible"
 on:  # yamllint disable-line rule:truthy
   push:
-    branches: ["main", "master"]
+    branches: ["main"]
   workflow_dispatch:
 jobs:
   yamllint:
