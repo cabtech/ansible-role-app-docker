@@ -2,14 +2,14 @@
 # --------------------------------
 
 - name: "Grab some packages so we can install the repo key"
-  ansible.builtin.yum:
+  ansible.builtin.dnf:
     name: "{{ docker_dependencies.redhat }}"
     state: present
   become: true
   tags: ["ct-docker"]
 
 - name: "Install Docker packages (IECM)"
-  ansible.builtin.yum:
+  ansible.builtin.dnf:
     name: "{{ docker_packages.redhat }}"
     state: present
     update_cache: true
@@ -18,7 +18,7 @@
   tags: ["ct-docker"]
 
 - name: "Install ECR helper package (AWS)"
-  ansible.builtin.yum:
+  ansible.builtin.dnf:
     name: "{{ docker_packages.aws.redhat }}"
     state: present
     update_cache: false
