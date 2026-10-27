@@ -1,10 +1,10 @@
-lint: .alint
+lint: .lintansible
 
-.alint: .ylint */*.yml .config/ansible-lint
+.lintansible: .lintyaml */*.yml .config/ansible-lint
 	uv run ansible-lint --config-file=.config/ansible-lint
 	@touch $@
 
-.ylint: */*.yml .config/yamllint
+.lintyaml: */*.yml .config/yamllint
 	uv run yamllint --config-file=.config/yamllint .
 	@touch $@
 
@@ -12,7 +12,7 @@ lint: .alint
 
 .PHONY: clean
 clean:
-	@/bin/rm -f .alint .ylint
+	@/bin/rm -f .lint*
 
 # --------------------------------
 
