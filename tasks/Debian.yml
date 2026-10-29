@@ -3,7 +3,7 @@
 
 - name: "Grab some packages so we can install the repo key"
   ansible.builtin.apt:
-    name: "{{ docker_dependencies.debian }}"
+    name: "{{ docker_dependencies }}"
     state: present
   become: true
   tags: ["ct-docker"]
@@ -28,7 +28,7 @@
 
 - name: "Update package cache and install Docker packages (IECM)"
   ansible.builtin.apt:
-    name: "{{ docker_packages.debian }}"
+    name: "{{ docker_packages }}"
     state: present
     update_cache: "{{ reg_docker_repo is changed }}"
   ignore_errors: "{{ ansible_check_mode }}"
@@ -37,7 +37,7 @@
 
 - name: "Install ECR helper package (AWS)"
   ansible.builtin.apt:
-    name: "{{ docker_packages.aws.debian }}"
+    name: "{{ docker_packages_aws }}"
     state: present
     update_cache: "{{ reg_docker_repo is changed }}"
   when: "'aws' in group_names"

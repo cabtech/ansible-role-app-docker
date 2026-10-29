@@ -3,14 +3,14 @@
 
 - name: "Grab some packages so we can install the repo key"
   ansible.builtin.dnf:
-    name: "{{ docker_dependencies.redhat }}"
+    name: "{{ docker_dependencies }}"
     state: present
   become: true
   tags: ["ct-docker"]
 
 - name: "Install Docker packages (IECM)"
   ansible.builtin.dnf:
-    name: "{{ docker_packages.redhat }}"
+    name: "{{ docker_packages }}"
     state: present
     update_cache: true
   ignore_errors: "{{ ansible_check_mode }}"
@@ -19,7 +19,7 @@
 
 - name: "Install ECR helper package (AWS)"
   ansible.builtin.dnf:
-    name: "{{ docker_packages.aws.redhat }}"
+    name: "{{ docker_packages_aws }}"
     state: present
     update_cache: false
   when: "'aws' in group_names"

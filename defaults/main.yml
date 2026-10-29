@@ -13,16 +13,5 @@ docker_svc_state: started
 docker_svc_enabled: true
 docker_users: []
 
-docker_dependencies:
-  debian: ["apt-transport-https", "ca-certificates", "curl", "software-properties-common"]
-  redhat: ["ca-certificates", "curl"]
-
-docker_packages:
-  debian: ["docker-ce"]
-  redhat: ["docker"]
-  aws:
-    debian: ["amazon-ecr-credential-helper"]
-    redhat: ["amazon-ecr-credential-helper"]
-
 # --------------------------------
 ...

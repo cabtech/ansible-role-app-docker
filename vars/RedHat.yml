@@ -1,0 +1,9 @@
+---
+# --------------------------------
+
+docker_dependencies: ["ca-certificates", "curl"]
+docker_packages: ["docker"]
+docker_packages_aws: ["amazon-ecr-credential-helper"]
+
+# --------------------------------
+...
