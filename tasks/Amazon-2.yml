@@ -13,7 +13,7 @@
   register: slartibartfast
   changed_when: "'jabberwocky' in slartibartfast.stdout"
   become: true
-  tags: ["ct-docker", skip_ansible_lint]
+  tags: ["ct-docker", "skip_ansible_lint"]
 
 - name: "Install Docker packages (IECM)"
   ansible.builtin.dnf:

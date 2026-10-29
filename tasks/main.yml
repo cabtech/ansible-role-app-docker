@@ -1,6 +1,11 @@
 ---
 # --------------------------------
 
+- name: "Include variables wrapper"
+  ansible.builtin.include_tasks:
+    file: variables.yml
+  tags: ["ct-docker"]
+
 - name: "Added some directories under /usr/local"
   ansible.builtin.file:
     path: "{{ item }}"
