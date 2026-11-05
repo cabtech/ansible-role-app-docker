@@ -6,6 +6,12 @@ ignore: |
   .venv
 
 rules:
+  document-end:
+    level: error
+    present: true
+  document-start:
+    level: error
+    present: true
   comments-indentation: disable
   indentation: disable
   line-length: disable
