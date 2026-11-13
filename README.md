@@ -1,5 +1,5 @@
 ----
-# ansible-role-app-docker
+# ansible-role-ct-docker
 
 ## Purpose
 * Installs Docker

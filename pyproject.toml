@@ -1,5 +1,5 @@
 [project]
-name = "ansible-role-app-docker"
+name = "ansible-role-ct-docker"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
